@@ -1,0 +1,11 @@
+Pages
+    1. login page - sign in with google
+    2. Users List page - list of users and add new user button
+    6. User page - user details (name, role, email) 
+    3. List of Tenants page - list of tenants with last bill info and and add new Tenant button 
+    4. Tenant page - tenant details with list of bills 
+    5. Bill page - bill details and add new bill
+
+I have a few questions:
+
+

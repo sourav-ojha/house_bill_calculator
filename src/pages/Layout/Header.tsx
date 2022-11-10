@@ -51,6 +51,12 @@ const MenuOtions = () => {
         <li>
           <Link to="/tenants">Tenants</Link>
         </li>
+        <li>
+          <Link to="/pricing" className="justify-between">
+            Pricing
+            <span className="badge">Admin</span>
+          </Link>
+        </li>
         {/* divider */}
         <li className="divider" />
         <li>

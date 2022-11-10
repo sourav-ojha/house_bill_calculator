@@ -1,6 +1,11 @@
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getTenant, getTenantElectricBill } from "../../services/tenants";
+import {
+  createTenantElectricBill,
+  getCostPerUnit,
+  getTenant,
+  getTenantElectricBill,
+} from "../../services/tenants";
 import { ElectricBill, Tenant } from "../../services/types";
 
 const TenantsDetails = (): JSX.Element => {
@@ -44,7 +49,9 @@ const TenantsDetails = (): JSX.Element => {
       ) : (
         <div className="text-center"> No Data Found</div>
       )}
-      {id && <BillsList id={id} />}
+      {id && tenant && (
+        <BillsList id={id} initialUnit={tenant.lastBillFinalUnit} />
+      )}
     </div>
   );
 };
@@ -68,16 +75,28 @@ function DetailsField({
   );
 }
 
-const BillsList = ({ id }: { id: string }): JSX.Element => {
+const BillsList = ({
+  id,
+  initialUnit,
+}: {
+  id: string;
+  initialUnit: number;
+}): JSX.Element => {
   const [electricBill, setElectricBill] = React.useState<ElectricBill[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [reFetch, setReFetch] = React.useState(false);
   useEffect(() => {
     const fetchBills = () => {
       setLoading(true);
-      if (!id) return;
+      setReFetch(false);
+      if (!id) {
+        console.log("No id");
+        return;
+      }
       getTenantElectricBill(id)
         .then((res) => {
           setElectricBill(res);
+          console.log(res, "BILL FETCHED");
         })
         .catch((err) => {
           console.log(err);
@@ -86,19 +105,12 @@ const BillsList = ({ id }: { id: string }): JSX.Element => {
           setLoading(false);
         });
     };
-    // fetchBills();
-    setElectricBill([
-      {
-        id: "string",
-        amount: 12,
-        date: "24/02/2002",
-        finalUnit: 12,
-        initialUnit: 45,
-        unitConsumed: 5,
-      },
-    ]);
-    setLoading(false);
-  }, []);
+    if (reFetch || loading) fetchBills();
+  }, [reFetch]);
+
+  const handleReFetch = () => {
+    setReFetch(true);
+  };
 
   return loading ? (
     <div className="text-center">Loading ...</div>
@@ -107,7 +119,11 @@ const BillsList = ({ id }: { id: string }): JSX.Element => {
       <div className="flex justify-between">
         <div className="text-2xl text-bold px-4 "> Bills</div>
 
-        <CreateEletricBill initialUnit={12} />
+        <CreateEletricBill
+          initialUnit={initialUnit}
+          tenantId={id}
+          handleReFetch={handleReFetch}
+        />
       </div>
       <div className="flex-1 flex flex-col items-center md:flex-row md:flex-wrap  gap-4 mt-8">
         {electricBill.map(
@@ -136,27 +152,73 @@ const BillsList = ({ id }: { id: string }): JSX.Element => {
 
 const CreateEletricBill = ({
   initialUnit,
+  tenantId,
+  handleReFetch,
 }: {
   initialUnit: number;
+  tenantId: string;
+  handleReFetch: () => void;
 }): JSX.Element => {
   const [finalUnit, setFinalUnit] = React.useState(0);
   const [amount, setAmount] = React.useState(0);
   const [unitConsumed, setUnitConsumed] = React.useState(0);
   const [date, setDate] = React.useState(new Date());
   const [loading, setLoading] = React.useState(false);
+  const [costPerUnit, setCostPerUnit] = React.useState(0);
   const todaysDate = new Date().toLocaleDateString();
 
   const [open, setOpen] = React.useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    getCostPerUnit()
+      .then((res) => {
+        setCostPerUnit(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const handleToggle = () => {
     setOpen(!open);
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = parseInt(e.target.value);
+    setFinalUnit(value);
+    let { amount, unitConsumed } = calculateBill(value, initialUnit);
+    setUnitConsumed(unitConsumed);
+    setAmount(amount);
+  };
+
   const handleSubmit = () => {
     setLoading(true);
     // createBill
+    const payload = {
+      unitConsumed,
+      amount,
+      date: date.toLocaleDateString(),
+      finalUnit,
+      initialUnit,
+    };
+    createTenantElectricBill(tenantId, payload);
     setLoading(false);
     handleToggle();
+    handleReFetch();
+  };
+
+  const calculateBill = (final: number, initial: number) => {
+    const unitConsumed = final - initial;
+    if (unitConsumed > 0 && !!costPerUnit) {
+      const amount = unitConsumed * costPerUnit;
+      return { unitConsumed, amount };
+    } else {
+      return { unitConsumed: 0, amount: 0 };
+    }
   };
 
   return (
@@ -178,7 +240,12 @@ const CreateEletricBill = ({
           <h3 className="font-bold text-lg text-center">{todaysDate}</h3>
           <div className="flex flex-col gap-1">
             <InputField label="Initial Unit" value={initialUnit} />
-            <InputField label="Final Unit" value={finalUnit} editable />
+            <InputField
+              label="Final Unit"
+              value={finalUnit}
+              onChange={handleChange}
+              editable
+            />
             <InputField label="Unit Consumed" value={unitConsumed} />
             <InputField label="Amount" value={amount} />
           </div>

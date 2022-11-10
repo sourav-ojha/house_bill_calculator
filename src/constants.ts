@@ -7,3 +7,5 @@ export const firebaseConfig = {
   appId: "1:553695472289:web:b77d7baeba723f62bf9ee0",
   measurementId: "G-6QG2NCJEPL",
 };
+
+export const pricingDocId = "pricing";

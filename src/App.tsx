@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./pages/Layout";
 import Login from "./pages/Login";
+import Pricing from "./pages/Pricing";
 import Tenants from "./pages/Tenants";
 import TenantsDetails from "./pages/Tenants/TenantsDetails";
 
@@ -14,6 +15,7 @@ const App = () => {
           <Route path="tenants" element={<Tenants />} />
           <Route path="tenants/:id" element={<TenantsDetails />} />
           <Route path="users" element={<div>Users</div>} />
+          <Route path="pricing" element={<Pricing />} />
         </Route>
       </Routes>
     </div>

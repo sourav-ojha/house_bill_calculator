@@ -19,7 +19,6 @@ export const getTenantsList = async () => {
   const colRef = collection(db, "tenants");
   const querySnapshot = await getDocs(colRef);
   const tenants: Tenant[] = [];
-  console.log("yup  ");
   querySnapshot.forEach((doc) => {
     tenants.push({ ...doc.data(), id: doc.id } as Tenant);
   });

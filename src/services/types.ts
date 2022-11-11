@@ -20,3 +20,11 @@ export type ElectricBill = {
   timestamp?: typeof Timestamp;
   unitConsumed: number;
 };
+
+export type User = {
+  id?: string;
+  email: string;
+  name: string;
+  photoURL?: string;
+  role: string;
+};

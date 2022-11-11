@@ -7,6 +7,7 @@ import {
   getTenantElectricBill,
 } from "../../services/tenants";
 import { ElectricBill, Tenant } from "../../services/types";
+import { urlEncoder } from "../../utills";
 
 const TenantsDetails = (): JSX.Element => {
   const id = useParams<{ id: string }>().id;
@@ -50,7 +51,12 @@ const TenantsDetails = (): JSX.Element => {
         <div className="text-center"> No Data Found</div>
       )}
       {id && tenant && (
-        <BillsList id={id} initialUnit={tenant.lastBillFinalUnit} />
+        <BillsList
+          id={id}
+          tenantName={tenant.name}
+          tenantMobile={tenant.phone}
+          initialUnit={tenant.lastBillFinalUnit}
+        />
       )}
     </div>
   );
@@ -76,15 +82,20 @@ function DetailsField({
 }
 
 const BillsList = ({
+  tenantName,
+  tenantMobile,
   id,
   initialUnit,
 }: {
+  tenantName: string;
+  tenantMobile: string;
   id: string;
   initialUnit: number;
 }): JSX.Element => {
   const [electricBill, setElectricBill] = React.useState<ElectricBill[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [reFetch, setReFetch] = React.useState(false);
+
   useEffect(() => {
     const fetchBills = () => {
       setLoading(true);
@@ -96,7 +107,6 @@ const BillsList = ({
       getTenantElectricBill(id)
         .then((res) => {
           setElectricBill(res);
-          console.log(res, "BILL FETCHED");
         })
         .catch((err) => {
           console.log(err);
@@ -129,22 +139,70 @@ const BillsList = ({
         {electricBill.map(
           (bill) =>
             bill && (
-              <div className="w-11/12 md:w-[500px] p-2 flex flex-col shadow rounded-lg  shadow-violet-100 relative">
-                <div className="flex sm:justify-center">
-                  {/* <div className="text-lg">Bill No : {bill.id}</div> */}
-                  <DetailsField label="Date" value={bill.date} />
-                </div>
-                <DetailsField label="Initial Unit" value={bill.initialUnit} />
-                <DetailsField label="Final Unit" value={bill.finalUnit} />
-                <DetailsField label="Amount" value={bill.amount} />
-                <DetailsField label="Unit Consumed" value={bill.unitConsumed} />
-                {/* copy btn */}
-                <div className="absolute top-2 right-2 btn btn-sm btn-primary">
-                  Copy
-                </div>
-              </div>
+              <BillDetail
+                key={bill.id}
+                tenantName={tenantName}
+                tenantMobile={tenantMobile}
+                bill={bill}
+              />
             )
         )}
+      </div>
+    </div>
+  );
+};
+
+const BillDetail = ({
+  tenantName,
+  tenantMobile,
+  bill,
+}: {
+  tenantName: string;
+  tenantMobile: string;
+  bill: ElectricBill;
+}) => {
+  const billText = `Hey+${tenantName},
+
+Initial+unit+:+${bill.initialUnit}
+Final+unit+:+${bill.finalUnit}
+Unit+consumed+:+${bill.unitConsumed}
+Amount+:+*Rs.+${bill.amount}*
+
+your+electric+bill+till+-+${bill.date}+is+*Rs.${bill.amount}*
+
+Thank+you,
+Sourav+Ojha`;
+
+  const urlEncodedBillText = urlEncoder(billText);
+  // `Hey+${tenantName},%0A%0AInitial+unit+:+${bill.initialUnit}%0AFinal+unit+:+${bill.finalUnit}%0AUnit+consumed+:+${bill.unitConsumed}%0AAmount+:+Rs.+${bill.amount}%0A%0Ayour+electric+bill+till+-+${bill.date}+is+Rs.${bill.amount}%0A%0AThank+you,%0ASourav+Ojha`;
+
+  const msgLink = `https://wa.me/91${tenantMobile}?text=${urlEncodedBillText}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(billText);
+  };
+
+  return (
+    <div className="w-11/12 md:w-[500px] p-2 flex flex-col shadow rounded-lg  shadow-violet-100 relative">
+      <div className="flex sm:justify-center">
+        {/* <div className="text-lg">Bill No : {bill.id}</div> */}
+        <DetailsField label="Date" value={bill.date} />
+      </div>
+      <DetailsField label="Initial Unit" value={bill.initialUnit} />
+      <DetailsField label="Final Unit" value={bill.finalUnit} />
+      <DetailsField label="Amount" value={bill.amount} />
+      <DetailsField label="Unit Consumed" value={bill.unitConsumed} />
+      {/* copy btn */}
+      <div
+        className="absolute  top-2 right-2 btn btn-sm btn-primary"
+        onClick={handleCopy}
+      >
+        Copy
+      </div>
+      <div className="absolute bottom-2 right-2 btn btn-ghost btn-circle ">
+        <a href={msgLink} target="_blank">
+          <img src="/whatsapp.svg" alt="whatsapp" className="w-10 h-10" />
+        </a>
       </div>
     </div>
   );
@@ -234,6 +292,7 @@ const CreateEletricBill = ({
         id="my-modal-6"
         className="modal-toggle"
         checked={open}
+        onChange={handleToggle}
       />
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">

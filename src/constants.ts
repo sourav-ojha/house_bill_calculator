@@ -9,3 +9,9 @@ export const firebaseConfig = {
 };
 
 export const pricingDocId = "pricing";
+
+export const ROLE = [
+  { id: "admin", name: "Admin" },
+  { id: "moderator", name: "Moderator" },
+  { id: "viewer", name: "Viewer" },
+];

@@ -31,6 +31,7 @@ const Tenants = () => {
             <Link
               to={`/tenants/${item.id}`}
               className=" w-11/12 p-2 shadow rounded-lg  shadow-violet-100 "
+              key={item.id}
             >
               <div className="text-xl">{item.name} </div>
             </Link>
@@ -115,6 +116,7 @@ const CreateTenantUI = (): JSX.Element => {
           <div className="flex flex-col gap-1">
             {tenantFields.map((field) => (
               <InputField
+                key={field.name}
                 type={field.type}
                 label={field.label}
                 name={field.name}

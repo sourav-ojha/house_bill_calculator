@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Pricing from "./pages/Pricing";
 import Tenants from "./pages/Tenants";
 import TenantsDetails from "./pages/Tenants/TenantsDetails";
+import Users from "./pages/Users";
 
 const App = () => {
   return (
@@ -14,7 +15,7 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route path="tenants" element={<Tenants />} />
           <Route path="tenants/:id" element={<TenantsDetails />} />
-          <Route path="users" element={<div>Users</div>} />
+          <Route path="users" element={<Users />} />
           <Route path="pricing" element={<Pricing />} />
         </Route>
       </Routes>

@@ -14,17 +14,14 @@ const useFirebaseService = (
     firebaseService(args)
       .then((res) => {
         setList(res);
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
       })
       .finally(() => {
         setLoading(false);
-        console.log("finally");
       });
   };
-
 
   return { serviceCall, loading, list };
 };

@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
-  const isLoggedIn = true;
+  const { user } = useAuth();
+
+  const isLoggedIn = user != null && user != undefined;
 
   return (
     <div className="navbar bg-violet-900">
@@ -23,6 +26,9 @@ const Header = () => {
 export default Header;
 
 const MenuOtions = () => {
+  const { user, logout } = useAuth();
+  const isAdmin = !!user && user.role === "admin";
+
   return (
     <div className="dropdown dropdown-end">
       <label tabIndex={0} className="btn btn-ghost btn-circle">
@@ -42,25 +48,29 @@ const MenuOtions = () => {
         tabIndex={0}
         className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-300 rounded-box w-52"
       >
-        <li>
-          <Link to="/users" className="justify-between">
-            Users
-            <span className="badge">Admin</span>
-          </Link>
-        </li>
+        {isAdmin && (
+          <li>
+            <Link to="/users" className="justify-between">
+              Users
+              <span className="badge">Admin</span>
+            </Link>
+          </li>
+        )}
         <li>
           <Link to="/tenants">Tenants</Link>
         </li>
-        <li>
-          <Link to="/pricing" className="justify-between">
-            Pricing
-            <span className="badge">Admin</span>
-          </Link>
-        </li>
+        {isAdmin && (
+          <li>
+            <Link to="/pricing" className="justify-between">
+              Pricing
+              <span className="badge">Admin</span>
+            </Link>
+          </li>
+        )}
         {/* divider */}
         <li className="divider" />
         <li>
-          <Link to="/login">Logout</Link>
+          <div onClick={logout}>Logout</div>
         </li>
       </ul>
     </div>

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import Loading from "../../components/Loading";
 import {
   createTenantElectricBill,
   getCostPerUnit,
@@ -33,7 +34,7 @@ const TenantsDetails = (): JSX.Element => {
   }, []);
 
   return loading && !tenant ? (
-    <div className="text-center">Loading ...</div>
+    <Loading />
   ) : (
     <div className="flex flex-col gap-4 mt-4 px-2">
       <Link to="/tenants" className="btn btn-sm w-16 ">
@@ -123,7 +124,7 @@ const BillsList = ({
   };
 
   return loading ? (
-    <div className="text-center">Loading ...</div>
+    <Loading />
   ) : (
     <div className="flex flex-col gap-4 mt-4 px-2">
       <div className="flex justify-between">
@@ -296,6 +297,11 @@ const CreateEletricBill = ({
       />
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
+          {loading && (
+            <div className="w-[90%] h-full absolute bottom-0 bg-base-100 opacity-80 overflow-hidden ">
+              <Loading />
+            </div>
+          )}
           <h3 className="font-bold text-lg text-center">{todaysDate}</h3>
           <div className="flex flex-col gap-1">
             <InputField label="Initial Unit" value={initialUnit} />

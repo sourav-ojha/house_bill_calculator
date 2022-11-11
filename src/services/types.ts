@@ -23,8 +23,8 @@ export type ElectricBill = {
 
 export type User = {
   id?: string;
-  email: string;
+  email: string | null;
   name: string;
-  photoURL?: string;
+  photoURL?: string | null;
   role: string;
 };

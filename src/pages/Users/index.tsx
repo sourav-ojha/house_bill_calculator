@@ -51,7 +51,7 @@ const UserCard = ({ user }: { user: User }) => {
 
   const handleEditClose = () => setIsEdit(false);
 
-  const handleChangeRole = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRole = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (user.id && e.target.value) {
       updateRole(user.id, e.target.value);
       setRole(e.target.value);

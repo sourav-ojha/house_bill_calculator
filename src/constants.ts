@@ -14,4 +14,5 @@ export const ROLE = [
   { id: "admin", name: "Admin" },
   { id: "moderator", name: "Moderator" },
   { id: "viewer", name: "Viewer" },
+  { id: "user", name: "User" },
 ];

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import Loading from "../../components/Loading";
 import useFirebaseService from "../../hooks/useFirebaseService";
 import { getTenantsList, createTenant } from "../../services/tenants";
 import { Tenant } from "../../services/types";
@@ -24,7 +25,7 @@ const Tenants = () => {
       </div>
       <div className="flex-1 flex flex-col items-center gap-4 mt-8">
         {loading ? (
-          <div>Loading... </div>
+          <Loading />
         ) : (
           !!list &&
           list.map((item: Tenant) => (
@@ -120,6 +121,7 @@ const CreateTenantUI = (): JSX.Element => {
                 type={field.type}
                 label={field.label}
                 name={field.name}
+                // @ts-ignore
                 value={state[field.name]}
                 onChange={handleChange}
               />

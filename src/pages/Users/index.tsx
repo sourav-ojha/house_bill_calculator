@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Loading from "../../components/Loading";
 import { ROLE } from "../../constants";
 import { User } from "../../services/types";
 import { getUsersList, updateRole } from "../../services/user";
@@ -25,7 +26,7 @@ const Users = () => {
       </div>
       <div className="flex-1 flex flex-col items-center gap-4 mt-8">
         {loading ? (
-          <div>Loading... </div>
+          <Loading />
         ) : (
           !!list &&
           list.map((item: User) => <UserCard key={item.id} user={item} />)

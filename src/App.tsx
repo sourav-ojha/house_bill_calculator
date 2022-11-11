@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loading from "./components/Loading";
 import { useAuth } from "./context/AuthContext";
 
 const Layout = lazy(() => import("./pages/Layout"));
@@ -14,7 +15,7 @@ const Users = lazy(() => import("./pages/Users"));
 const FullScreenLoading = () => {
   return (
     <div className="w-screen h-screen bg-gray-100 bg-opacity-50 absolute top-0 left-0 flex justify-center items-center">
-      <div className="text-center text-blue-500">Loading...</div>
+      <Loading />
     </div>
   );
 };
